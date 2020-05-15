@@ -4,6 +4,7 @@
  * ***************************************************/
  
 var bGround = require('fcc-express-bground');
+require('dotenv').config()
 var myApp = require('./myApp');
 var express = require('express');
 var app = express();
