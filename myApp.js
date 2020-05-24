@@ -1,5 +1,15 @@
-var express = require('express');
+const express = require('express');
+const mongoose = require('mongoose');
+const config = require('config');
 var app = express();
+
+const db = config.get('mongoURI');
+const Users = require('./models/Users');
+
+mongoose
+  .connect(db, { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
+  .then(() => console.log('MongoDB Connected...'))
+  .catch(err => console.log(err));
 
 // --> 7)  Mount the Logger middleware here
 app.use((req, res, next) => {
@@ -34,9 +44,7 @@ app.use(express.static(__dirname + '/public'))
 /** 6) Use the .env file to configure the app */
 app.get("/json", ((req,res) => {
   let msgobj = {"message" :"Hello json"};
-  if(process.env.MESSAGE_STYLE === 'uppercase'){
      msgobj.message = msgobj.message.toUpperCase();
-    }
   res.json(msgobj);
 }));
  
@@ -71,10 +79,15 @@ app.get("/name", ((req, res) => {
 
 
 /** 12) Get data form POST  */
-app.post("/name", ((req, res) => { 
-  const string = `${req.body.first} ${req.body.last}`;
-  res.json({ name: string });
-}));
+app.post('/', (req, res) => {
+  const newUser = new Users({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+  });
+  newUser
+    .save()
+    .then(item => res.json(item));
+});
 
 
 // This would be part of the basic setup of an Express app
