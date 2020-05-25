@@ -86,9 +86,11 @@ app.post('/', (req, res) => {
   });
   newUser
     .save()
-    .then(item => res.json(item));
+    .then( Users.find()
+     .sort({ date: -1 })
+     .then(items => res.json(items))
+    );
 });
-
 
 // This would be part of the basic setup of an Express app
 // but to allow FCC to run tests, the server is already active
